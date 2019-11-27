@@ -1,0 +1,527 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+
+struct note
+{
+    char f_t[200];
+    char title[20];
+    struct note *next;
+    struct note *prev;
+
+}*head = NULL,*tail = NULL;
+
+void choice()
+{
+    int n;
+    printf("\n1 For Add A New Note\n2 For Display A Note\n3 For Edit A Note\n4 For Delete A Note\n5 For Search A Note\n6 For Show All Notes\n7 For Change Color\n8 For Exit.\n");
+
+    printf("\nEnter Your Choice :");
+    scanf("%d", &n);
+
+    switch(n)
+    {
+    case 1:
+        create();
+        break;
+    case 2:
+        display();
+        break;
+    case 3:
+        edit_note();
+        break;
+    case 4:
+        delete_note();
+        break;
+    case 5:
+        search_note();
+        break;
+    case 6:
+        show_list();
+        break;
+    case 7:
+        color_code();
+        break;
+    case 8:
+        break;
+
+    default:
+    {
+        system("cls");
+        printf("\nWrong Choice!!!\n\n");
+        system("pause");
+        system("cls");
+        choice();
+
+    }
+    }
+
+}
+void create()
+{
+
+    struct note *new_node, *current;
+    int n,m;
+
+    if (head==NULL && tail==NULL)
+    {
+        do
+        {
+            new_node = (struct note*)malloc(sizeof(struct note));
+
+            system("cls");
+            printf("Enter New Note Title : ");
+            fflush(stdin);
+            gets(new_node->title);
+
+
+            printf("Write your creative thought : ");
+            fflush(stdin);
+            gets(new_node->f_t);
+            system("cls");
+
+            printf("\nYour Note is successfully Created\n");
+            printf("\nDo You Want To Add Another Note?\n1 for Yes\n2 for No\n");
+            scanf("%d",&n);
+
+            new_node->next=NULL;
+            new_node->prev=NULL;
+            if(head==NULL&&tail==NULL)
+            {
+                head=new_node;
+                tail=new_node;
+                current=new_node;
+            }
+            else
+            {
+                current->next=new_node;
+                new_node->prev=current;
+                current=new_node;
+                tail=new_node;
+            }
+        }
+        while(n==1);
+
+        system("cls");
+        choice();
+
+    }
+    else
+    {
+        system("cls");
+        printf("You have already created Notes.\n\nDo you wanna update your Note List?\n1 for Yes\n2 for No\n");
+        scanf("%d",&m);
+        if(m==1)
+            update_note();
+        else
+        {
+            system("cls");
+            choice();
+        }
+    }
+}
+
+
+void display()
+{
+    struct note *current,*temp=NULL;
+    char ch[20];
+
+    if(head==NULL&&tail==NULL)
+    {
+        system("cls");
+        printf("\nThere Is No Notes -_-\n\n");
+        system("pause");
+        system("cls");
+        choice();
+
+    }
+    else
+    {
+        system("cls");
+        printf("\nEnter The Note Title:");
+        fflush(stdin);
+        gets(ch);
+        current=head;
+        while(current!=NULL)
+        {
+            if(strcmp(current->title,ch) == 0)
+            {
+                temp=current;
+
+            }
+
+            current=current->next;
+        }
+        system("cls");
+        if (temp==NULL)
+        {
+            printf("No Note Found with this name >> %s <<\n\n",ch);
+            system("pause");
+            system("cls");
+            choice();
+        }
+
+        else
+            printf("Here Is Your Note ( %s )\n\n%s\n\n",ch,temp->f_t);
+    }
+    system("pause");
+    system("cls");
+    choice();
+}
+
+
+void delete_note ()
+{
+    char ch[20];
+    struct note *current,*temp1,*temp2,*temp=NULL;
+
+    if(head==NULL&&tail==NULL)
+    {
+        system("cls");
+        printf("\nEmpty Notes -_-\n\n");
+        system("pause");
+        system("cls");
+        choice();
+    }
+    else
+    {
+        system("cls");
+        printf("\nEnter The Note Title You Want To Delete:");
+        fflush(stdin);
+        gets(ch);
+        current=head;
+
+        while(current!=NULL)
+        {
+            if(strcmp(current->title,ch) == 0)
+            {
+                temp=current;
+            }
+
+            current=current->next;
+        }
+        system("cls");
+        if (temp==NULL)
+        {
+            printf("No Note Found with this name >> %s <<\n\n",ch);
+            system("pause");
+            system("cls");
+            choice();
+        }
+
+        else
+        {
+            if(temp==head&&temp->prev==NULL&&temp->next==NULL)
+            {
+
+                head=NULL;
+                tail=NULL;
+                printf("\n[%s] Note Deleted Successfully\n\n",ch);
+                system("pause");
+                system("cls");
+                choice();
+            }
+            else if(temp==head&&temp->prev==NULL)
+            {
+
+                head=temp->next;
+                head->prev=NULL;
+                printf("\n[%s] Note Deleted Successfully\n\n",ch);
+                system("pause");
+                system("cls");
+                choice();
+            }
+            else if(temp==tail&&temp->next==NULL)
+            {
+                current=temp->prev;
+                current->next=NULL;
+                tail=current;
+                printf("\n[%s] Note Deleted Successfully\n\n",ch);
+                system("pause");
+                system("cls");
+                choice();
+            }
+            else
+            {
+                temp2=temp->next;
+                temp1=temp->prev;
+                temp1->next=temp2;
+                temp2->prev=temp1;
+
+                printf("\n[%s] Note Deleted Successfully\n\n",ch);
+                system("pause");
+                system("cls");
+                choice();
+            }
+
+        }
+    }
+
+}
+void edit_note()
+{
+    system("cls");
+    int n;
+    char ch[20];
+    struct note *current,*temp;
+    current=head;
+    if(head==NULL && tail == NULL)
+    {
+        printf("\nEmpty Notes -_-\n\n\n");
+        system("pause");
+        system("cls");
+        choice();
+    }
+    else
+    {
+        system("cls");
+        printf("\nEnter The Note Title You Wanna Edit:");
+        fflush(stdin);
+        gets(ch);
+        current=head;
+        while(current!=NULL)
+        {
+            if(strcmp(current->title,ch) == 0)
+            {
+                temp=current;
+
+            }
+
+            current=current->next;
+        }
+        system("cls");
+        if (temp==NULL)
+        {
+            printf("No Note Found with this name >> %s <<\n\n",ch);
+            system("pause");
+            system("cls");
+            choice();
+        }
+
+        else
+        {
+            temp = realloc(temp,sizeof(struct note));
+            printf("Write your thought : ");
+            fflush(stdin);
+            gets(temp->f_t);
+            printf("\nYour Note is successfully Created\n\n\n");
+        }
+
+    }
+    system("pause");
+    system("cls");
+    printf("Wanna Display This Note?\n1 for Yes\n2 for No\n");
+    scanf("%d",&n);
+    if(n==1)
+    {
+        system("cls");
+        printf("Here Is Your updated Note ( %s )\n\n%s\n\n",ch,temp->f_t);
+        system("pause");
+        system("cls");
+        choice();
+
+    }
+
+    else
+    {
+        system("cls");
+        choice();
+    }
+
+
+}
+
+void show_list()
+{
+
+    system("cls");
+    int n,count=0;
+    struct note *current;
+    current=head;
+    if(head==NULL && tail == NULL)
+    {
+        printf("\nEmpty Notes -_-\n\n\n");
+        system("pause");
+        system("cls");
+        choice();
+    }
+    else
+    {
+        printf("Here is your created thought list\n\n");
+        while(current!=NULL)
+        {
+            count++;
+            printf("%d) ",count);
+            puts(current->title);
+            fflush(stdin);
+            current=current->next;
+
+        }
+    }
+    printf("\n\n");
+    system("pause");
+    system("cls");
+    printf("Wanna Display Any Note?\n1 for Yes\n2 for No\n");
+    scanf("%d",&n);
+    if(n==1)
+        display();
+    else
+    {
+        system("cls");
+        choice();
+    }
+}
+
+void search_note ()
+{
+    system("cls");
+    int n,count2,count=0;
+    char ch[20];
+    struct note *current,*temp;
+    current=head;
+    if(head==NULL && tail == NULL)
+    {
+        printf("\nEmpty Notes -_-\n\n\n");
+        system("pause");
+        system("cls");
+        choice();
+    }
+    else
+    {
+        system("cls");
+        printf("\nEnter The Note Title You Wanna Search:");
+        fflush(stdin);
+        gets(ch);
+        current=head;
+        while(current!=NULL)
+        {
+            count++;
+            if(strcmp(current->title,ch) == 0)
+            {
+                temp=current;
+                count2=count;
+
+            }
+
+            current=current->next;
+        }
+        system("cls");
+        if (temp==NULL)
+        {
+            printf("No Note Found with this name >> %s <<\n\n",ch);
+            system("pause");
+            system("cls");
+            choice();
+        }
+
+        else
+            printf("Your Note ( %s ) is at Number %d Position\n\n",ch,count2);
+    }
+    system("pause");
+    system("cls");
+    printf("Wanna Display This Note?\n1 for Yes\n2 for No\n");
+    scanf("%d",&n);
+    if(n==1)
+    {
+        system("cls");
+        printf("Here Is Your Note ( %s )\n\n%s\n\n",ch,temp->f_t);
+        system("pause");
+        system("cls");
+        choice();
+
+    }
+
+    else
+    {
+        system("cls");
+        choice();
+    }
+
+}
+
+void update_note()
+{
+    struct note *new_node, *current;
+    int n;
+
+    do
+    {
+        new_node = (struct note*)malloc(sizeof(struct note));
+
+        system("cls");
+        printf("Enter New Note Title : ");
+        fflush(stdin);
+        gets(new_node->title);
+
+
+        printf("Write your creative thought : ");
+        fflush(stdin);
+        gets(new_node->f_t);
+        system("cls");
+
+        printf("\nYour Note is successfully Created & Updated\n");
+        printf("\nDo You Want To Add Another Note?\n1 for Yes\n2 for No\n");
+        scanf("%d",&n);
+
+        new_node->next=NULL;
+        new_node->prev=NULL;
+
+        current=tail;
+        current->next=new_node;
+        new_node->prev=current;
+        tail=new_node;
+    }
+    while(n==1);
+
+    system("cls");
+    choice();
+
+}
+
+void color_code()
+{
+    system("cls");
+    printf("\n    0 = Black       8 = Gray\n\
+    1 = Blue        9 = Light Blue\n\
+    2 = Green       A = Light Green\n\
+    3 = Aqua        B = Light Aqua\n\
+    4 = Red         C = Light Red\n\
+    5 = Purple      D = Light Purple\n\
+    6 = Yellow      E = Light Yellow\n\
+    7 = White       F = Bright White\n ");
+
+    char code[15] = "COLOR ";
+
+    printf("\nEnter Color Code For Background : ");
+    fflush(stdin);
+    scanf("%c",&code[6]);
+    printf("Enter Color Code For Text : ");
+    fflush(stdin);
+    scanf("%c",&code[7]);
+    if(code[6]==code[7])
+    {
+        printf("Code Can't Be Same -_-\n");
+        system("pause");
+        system("cls");
+        color_code();
+    }
+    else
+    {
+        system(code);
+        system("cls");
+        choice();
+    }
+}
+
+int main()
+{
+    printf("----------------- Welcome <3 ------------------------\n        We Are Happy To See You Here\n           Powered By SEMICOLON\n");
+    printf("-----------------------------------------------------\n\n\n       ");
+    system("pause");
+    system("cls");
+    choice();
+
+    return 0;
+
+}
